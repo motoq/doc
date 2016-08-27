@@ -1,0 +1,327 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Orbiter</TITLE>
+</HEAD>
+<BODY BGCOLOR="black" TEXT="white"
+      LINK="yellow"   VLINK="lime" ALINK="red">
+<!-- =============================================================== -->
+<BR>
+<DIV ALIGN="center">
+<H1>Orbiter</H1>
+<H3>with</H3>
+<H2>Central Body Model</H2>
+<P>
+<IMG SRC="orbiter.jpg" ALT="Sparky Orbit">
+</DIV>
+
+<BR>
+<BR>
+<BR>
+
+The Orbiter example makes use of a generalized six degree of freedom
+(6DOF) rigid body model built into the VSE library.  A wide variety of
+platforms can be modeled by implementing an abstract method that
+computes influences acting on the vehicle.  These influences include
+forces, accelerations, and torques the vehicle is subjected to given its
+state.  The use of this library class results in the Orbiter simulation
+requiring only three classes external to the VSE.  One defines the
+models taking part in the simulation - a rotating central body and a
+vehicle orbiting about that body.  The second class extends the 6DOF
+library class, fulfilling the abstract method by defining gravitational
+potential, propulsion forces, and attitude control torques acting on
+this vehicle.  The third class connects the model (math) to the
+visualization environment (graphics) and user inputs (keyboard
+controls).
+
+<P>
+
+A quick note on the nomenclature "six degree of freedom", or 6DOF, as
+used in this project.  The term 6DOF is not meant to be the formal
+definition encountered in academics.  It simply means that in addition
+to using accelerations along the X, Y, and Z axes to compute
+translational position and velocity, angular accelerations about the
+these axes are also used to compute attitude and angular velocity.  For
+a rigid body, translational motion is fairly simple to model because
+movement along each axis can be treated independently when all forces
+are resolved about the body's center of gravity.  This process involves
+translating each force acting on the body to be through its center of
+gravity and then computing the resulting torques induced by those forces
+before integration of the equations of motion.  This simplification does
+not exist for rotational motion.  A lack of symmetry in the vehicle's
+mass distribution results in a torque about one axis inducing
+accelerations about other axes.  In addition, even for a completely
+symmetric body (say, a sphere), gyroscopic coupling results in
+accelerations about a third axis due to angular rates about two other
+axes!  The math is not difficult - just a bit more involved.
+
+<P>
+
+In applied engineering, the terms 6DOF and 3DOF are often used to
+distinguish between simulations modeling rotational dynamics vs.
+kinematics.  The models often have many more degrees of freedom.
+Because so many degrees of freedom may exist in a complicated model,
+describing that model by listing the total number of degrees of freedom
+becomes a bit nonsensical.
+
+<H2>Description of the 6DOF Orbiter Simulation</H2>
+
+References made to class names that include the package path should be
+prefixed <B>com.motekew.</B>  For example, the full path to intxm.IDiffQ
+is com.motekew.intxm.IDiffQ.  Once introduced, classes will usually be
+referenced only by their names.  The full path is omitted when
+mentioning Java3D classes - they are easy to lookup in the online Java3D
+documentation.  A summary of each package comprising the VSE,
+"notes.txt", is included in the download.
+
+<!-- ===============================================================
+<BR>
+<DIV ALIGN="left">
+<TABLE>
+<TR BGCOLOR="#00FFFF"><TD>Classes Built for a Specific Model/Simulation
+<TR BGCOLOR="#FFCCCC"><TD>Vehicle Simulation Environment Library Classes
+<TR BGCOLOR="#00FF99"><TD>Java3D Classes
+</TABLE>
+</DIV>
+<P>
+<BR>
+     =============================================================== -->
+
+<P>
+
+Within the VSE, models, along with classes used to run them in a
+simulation, are packaged individually as libraries.  The actual model
+typically consists of two core classes.  The most basic represents a
+system of differential equations doing nothing more than taking the
+current time and state vector as inputs, outputting the corresponding
+derivatives to that state vector.  See <I>intxm.IDiffQ.getXDot()</I> for
+the basic interface.  The class <B>msd3D.MassSpDpDQ</B> is an example of
+the equations of motion for a mass, spring, damper.  The class
+<B>trmtm.Simple6DOFdq</B>, also implementing <B>IDiffQ</B> is used by
+<B>orbiter.Orbiter</B>.  It is instantiated within the
+<B>trmtm.Simple6DOFSys</B> abstract class - the 6DOF library model
+previously alluded to.  <B>Simple6DOFSys</B> implements
+<B>intxm.ISysEqns</B>, which guarantees functionality related to the
+State-Space and propagation of a dynamic model.
+
+<P>
+
+<I>Simple6DOFSys.finishModel()</I> is an abstract method allowing the
+user to add forces acting through the modeled body's center of gravity,
+field forces, accelerations, and torques.  This class offers a great
+deal of flexibility with respect to modeling without further knowledge
+of rigid body dynamics.  The body force input may be thrusts due to a
+propulsion system, environmental influences, etc....  Field forces could
+be the result of something such as a magnetic field.  Gravitational
+potential is a common acceleration.  Control surfaces and attitude
+control systems may impart torques about the body.  All of these inputs
+can be computed external to these library classes based on the model's
+current state.  The differential equations class, <B>Simple6DOFdq</B>,
+queries the system for these inputs during the integration process.  The
+integrator used within the <B>Simple6DOFSys</B> class is currently
+hard-coded to be <B>intxm.RK4</B> (implementing
+<B>intxm.IIntegrator</B>).  <B>Simple6DOFdq</B> and <B>Simple6DOFSys</B>
+are aware of each other.
+
+<P>
+
+The remaining classes in each model package define the simulation
+environment and usually contain objects that generate the GUI, set up
+the 3D environment, select the solid model, and connect the 3D
+environment to the simulated model (<B>orbiter.OrbiterVisModel</B>).
+User input controls (keyboard, mouse, etc...) are configured in one of
+these classes as well.  The primary class in each model implements an
+interface needed to start the simulation (<B>orbiter.Orbiter</B>).  This
+class either needs to be instantiated within an application to run, or
+launched directly with the <B>RunVSE</B> application.  The JAR file
+containing the supplied launcher is called RunVSE.jar.
+
+<H3>From the Top</H3>
+
+The VSE is designed to propagate multiple models independently while at
+the same time allowing each model to be cognizant of the other.  If one
+model influences another, the influenced model asks the other for
+relevant aspects of its state.  For example, the Orbiter simulation
+consists of a rotating central body model and a vehicle that orbits it.
+A more traditional and direct approach to modeling this scenario would
+be to treat the vehicle as the focus of the simulation, allowing it to
+control the progression of time and the integration process.  The
+vehicle model would call upon the central body model as necessary to
+update its state.  This would allow the position of the vehicle relative
+to that of the central body to be computed, which is required to
+determine the gravitational attraction imparted upon the vehicle by the
+central body (the central body is not a sphere, so the gravitational
+attraction depends on the position of the vehicle <B>and</B> the attitude
+of the central body).  In this sense, the central body model is a second
+class citizen of sorts, existing only to support the needs of the
+vehicle model.
+
+<P>
+
+The VSE supports this central model paradigm.  However, the method
+employed by the Orbiter simulation propagates the rotating central body
+and vehicle states independently.  The following lengthy outline of the
+Orbiter model includes a description of the classes built to handle all
+the time synchronization issues that arise when propagating each model
+independently.
+
+<P>
+
+Everything starts with the <B>orbiter.Orbiter</B> class.  It implements
+the <B>servm.ISimModel</B>, which guarantees a <I>public void run()</I>
+method.  This method is used by an application that will instantiate the
+<B>Orbiter</B> class and then launch it.
+
+<P>
+
+<B>Orbiter</B> creates a <B>j3d.SimV3Dcfg</B> object containing
+simulation configuration options.  A display refresh rate obtained from
+the <B>SimV3Dcfg</B> object is used to initialize a
+<B>j3d.ModelTimeBehavior</B> object.  This important extension of the
+Java3D <B>Behavior</B> controls the overall progression of time.  There
+are two versions of time within the simulation.  The first is computer,
+or clock time.  It advances at the output rate plus the time it takes to
+perform all computations related to propagating each model and updating
+the display (the output rate is not the underlying graphics refresh
+rate).  In contrast, simulation time marks the progression of time
+within the simulation.  If the simulation time is set to progress at 60
+times that of the clock, then only one minute of clock time would pass
+for an hour of simulation time (ignoring lag time due to computations).
+For a computationally intensive simulation, it may not be possible to
+have simulation time out-pace, or even equal, clock time.
+
+<P>
+
+Once initialized (during the instantiation of <B>j3d.SimV3D</B>,
+occurring at the end of <I>Orbiter.run()</I>) , the Behavior's
+<I>wakupon()</I> method is called with a Java3D <B>WakeupCondition</B>
+that will cause the simulation to sleep for the duration of the
+configured output rate.  Upon waking up, the <I>"processStimulus()"</I>
+method is called which updates the simulation time.  Each model has a
+<B>j3d.IVisualModel</B> object associated with it that then triggers
+an <I>IVisualModel.update()</I> method.  As previously mentioned,
+implementation of an <B>IVisualModel</B> is what ties the mathematical
+model to the visualization environment.
+
+<P>
+
+After the <B>ModelTimeBehavior</B> is instantiated, A
+<B>cycxm.ModelStepper</B> object is created and initialized with an
+integration step and output step size.  This class manages timing
+related bookkeeping for a model relying on some form of numeric
+integration (or propagation by sequential discrete step sizes).  It
+determines how many integration steps are needed to meet a larger output
+step size.  For non-graphic output, the output rate could be the
+frequency at which numeric data should be written to a file.  For this
+scenario, it is the length of time between updates to the Java3D display
+(most likely larger than the Java3D refresh rate).  The
+<I>ModelStepper.stepper()</I> method documentation describes what
+happens when the output rate is not a multiple of the integration step
+size.  Multiple <B>ModelStepper</B> objects can be created to manage
+models requiring different integration step sizes.
+
+<P>
+
+Models for the central body (<B>trmtm.RotatingBodySys</B>) and orbiting
+vehicle (<B>orbiter.OrbiterSys</B>) are then created and their states
+initialized.  Both of these objects implement <B>intxm.ISysEqns</B>.  A
+two element array of <B>IVisualModel</B> objects is then created.  The
+first is <B>j3d.RotatingBodyVisModel</B> for the central body and
+<B>orbiter.OrbiterVisModel</B> for the orbiter.  As stated before, these
+classes link the math models to the visualization environment.  For
+example, <B>orbiter.OrbiterVisModel</B> defines how the orbiter model
+reacts to keyboard inputs.
+
+<P>
+
+The constructors for both <B>IVisualModel</B> objects make use of Java3D
+<B>TransformGroup</B> objects containing the solid model.  As described
+by the Java3D documentation, a "...TransformGroup node specifies a
+single spatial transformation, via a Transform3D object, that can
+position, orient, and scale all of its children."  What this means is
+the TransformGroup is the object that is modified to
+change the graphic representation of the model state.
+
+<P>
+
+The array of <B>IVisualModel</B> objects is then registered with the
+<B>ModelTimeBehavior</B> object allowing it to manage the process of
+updating the state of each model from one output interval to the next.
+All models will output at the same rate.  However, not all models will
+need to use the same integration step size.  The order in which each
+<B>IVisualModel</B> appears in the array is the order in which each
+model will be updated.  For maximum accuracy, the state of independent
+models should be updated before that of dependent ones.  For example,
+with the orbiter simulation, the orientation of the central body must
+first be computed to determine the gravitational potential exerted on
+the vehicle.  The twist is most integration methods, such as the RK4
+one, require the state of influences acting on the model at intermediate
+points between between not only each output, but between each
+integration step.  The Orbiter example is easy to handle because the
+central body model is a simple analytic function - the total rotation
+angle is equal to the initial angle plus the angular velocity multiplied
+by the total time.  When the <B>ModelTimeBehavior</B> tells the
+<B>OrbiterVisModel</B> to update, the <B>ModelStepper</B> integrates the
+orbiter's equations of motion, propagating its state forward by the
+integration step size.  This causes the integrator to call the
+<I>Simple6DOFdq.getXDot()</I> method, which in turn calls the
+<I>OrbiterSys.finishModel()</I> method.  This method requests the state
+of the central body at multiple intermediate points between the
+integration time step.  Being a simple analytic model, the central body
+recomputes its attitude for each requested time.
+
+<P>
+
+If the central body dynamics were based on a more complicated model,
+then a decision would need to be made regarding how to handle retrieving
+its state.  One option is to simply use the latest central body state
+for all calls by the orbiter's integrator (no change in influences for
+each time step during the integration period).  This is the most
+efficient method and may be accurate enough for many simulations.  An
+alternate method would be for the central body model to continuously
+recompute its state on each call from some previous time to the time
+requested - this could be costly in terms of computational burden but
+simple to implement.  Yet another option would be for the central body
+to internally buffer a set of state vectors spanning the output step
+size, allowing for quick interpolation of the central body's state at
+intermediate times.  A forth method would be to make use of a simplified
+linear model for short term propagation of the central body's state
+(similar to a state-transition matrix).  The final decision rests with
+the designer of the model.  The goal here is to simply bring light to
+this potential problem.
+
+<P>
+
+After initializing the array of <B>IVisualModel</B> objects, a Java3D
+<B>BranchGroup</B> is created for each model with the
+<B>j3d.SimpleBGModel</B> class.  A <B>BranchGroup</B> can be thought of
+as a basic self contained unit that can be inserted independently into
+the Java3D virtual universe.  It contains the visual representation of
+the model along with the logic needed to update itself and react to
+outside stimuli.  This is where keyboard controls are connected using
+the <B>j3d.KeyBehavior</B> class.  In addition to keyboard controls, the
+<B>SimpleBGModel</B> class can also create its own
+<B>ModelTimeBehavior</B> for simulations based around a central model,
+alleviating the need for the user to create them outside of this class.
+The SimpleBGModel could just a well be passed to any external Java3D
+application requiring a BranchGroup object.  Note that the VSE uses a
+"Z-axis up" reference frame, where a rotation of -90 deg about the
+X-axis is made from the Java3D "Y-axis up" reference frame.
+
+<P>
+
+The final step is to instantiate a <B>j3d.SimV3D</B> object with the
+<B>SimV3Dcfg</B> object and the array of <B>BranchGroup</B> models.
+From here, <I>SimV3D.init()</I> creates the basic GUI interface.
+Instantiation of <B>j3d.SimV3DJPanel</B> completes the GUI and fires up
+the simulation with the creation of a Java3D <B>SimpleUniverse</B>.
+
+
+<P>
+<BR>
+<HR>
+<A HREF="index.html">Back to Homepage</A>
+
+</BODY>
+</HTML>
