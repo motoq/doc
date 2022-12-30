@@ -32,15 +32,22 @@ LOD, corrections to the reduction theory) are all set to zero.  The
 <B>finals.all (IAU2000)</B> files are supported.  Note values from these
 files are separated by semicolons, not commas.  The first row is composed
 of column labels.  The files are available at the top of the page from
-the <i>version metadata</i> links, not the unformatted <i>latest version</i>
+the <I>version metadata</I> links, not the unformatted <I>latest version</I>
 link.
 
 
 <H3>Contents</H3>
 
+Example input files along with the descriptions in this user guide
+should illustrate use of eomx.
+<P>
+
 <A HREF="#Overview">Input File Overview</A> <BR>
 <A HREF="#GeneralInputs">General Scenario Inputs</A> <BR>
-<A HREF="#DateTime">Date and Time</A>
+<A HREF="#DateTime">Date and Time</A> <BR>
+<A HREF="#Duration">Duration</A> <BR>
+<A HREF="#Units">Sticky Units</A> <BR>
+<A HREF="#Orbit">Orbit Definition</A> <BR>
 
 
 <A NAME="Overview"></A><H3>Input File Overview</H3>
@@ -53,8 +60,7 @@ statements then operate on those objects.
 Each statement is terminated by a semicolon.  This allows for an object
 definition to have multiple optional settings when default values are
 not desired.  Default values will typically be based on the most simple
-or computationally least expensive options.  Higher fidelity options
-typically need to be enabled.
+or computationally least expensive options.
 <P>
 Comments begin with the <B>#</B> sign and are effective until the end of
 a line.  The general formatting is free text.  White space between
@@ -62,12 +68,11 @@ values or between lines is ignored.  The end of inputs can be marked
 with the <B>end;</B> statement.
 <P>
 Some statements are configured to allow for multiple options, but
-currently only support one input type.  For example, date and time
-inputs require the user to specify <B>GD</B> indicating the time format
-is Gregorian date, despite this being the only accepted input format.
-That is because the input language is a work in progress, and options
-are being added as needed.
-
+currently only support one.  For example, date and time inputs require
+the user to specify <B>GD</B> indicating the time format is Gregorian
+date, despite this being the only accepted input format.  the input type
+is required to support additional options in the future.
+<P>
 Here is an example input file that creates two orbits:
 
 <PRE>
@@ -91,7 +96,7 @@ Orbit  t2  Kepler1  GD 2021 11 12 17 00 00.0
 #      CART  GCRF      0.05     0.7     0.4  -1.2     0.02    0.3;
 </PRE>
 
-With no commands acting on the orbits, the output is limited indicating
+With no commands acting on the orbits, the output is limited to indicating
 scenario settings and regurgitating the input orbit definitions:
 
 <PRE>
@@ -121,13 +126,14 @@ One TU is 806.811 seconds
     {2.149000  -7.539000  -2.186000} km/sec
 </PRE>
 
-The <q>dt eps</q> output indicates the amount of time that is considered
+The <Q>dt eps</Q> output indicates the amount of time that is considered
 to be zero when encountering boundary problems due to numerical round-off
 when locating time based tabulated values.  For example, when looking up
 ephemeris interpolation objects, if the maximum time associated with the
 interpolator is 60 seconds, and the time computed for interpolation is
 less than 60+eps seconds, then the end node point of the interpolator
-will be used instead of throwing an exception.
+will be used instead of throwing an exception.  The value is based on
+the time it would take a satellite in orbit at sea level to travel 1 mm.
 <P>
 Computational distance and time units are the earth relative canonical
 DU and TU.  One DU is defined by the gravitational scaling radius of the
@@ -137,34 +143,140 @@ semimajor axis length used to define the WGS 84 ellipsoid used for the
 transformation from ITRF Cartesian to geodetic (latitude, longitude,
 altitude) coordinates.
 <P>
-Default input units are DU, TU, and radians.  <q>Sticky</q> modifier
+Default input units are DU, TU, and radians.  <Q>Sticky</Q> modifier
 statements allow different units to be defined.  For example, before the
 first orbit definition above, the default units are changed to be
-kilometers and seconds.  At other times, units are specified within the
-input statement itself.
+kilometers and seconds.  Some statements specify units directly.
 
 
 <A NAME="GeneralInputs"></A><H3>General Scenario Inputs</H3> 
 
+<P style="background-color:LightCyan;">
 <font face = "courier">
-<b>SimStart</b> <i><A HREF="#DateTime">DateTime</A></i>
+<B>SimStart</B> <I><A HREF="#DateTime">DateTime</A></I>
 </font>
-<P>
+</P>
 SimStart indicates the start time of the scenario.  A
 <A HREF="#DateTime">date and time</A> entry should follow this keyword.
 
-
-<A NAME="DateTime"></A><H3>Date and Time</H3> 
-
+<P style="background-color:LightCyan;">
 <font face = "courier">
-<b>GD</b> <i>YYYY MM DD hh mm ss.s</i>
+<B>SimDuration</B> <I><A HREF="#Duration">Duration</A></I>
 </font>
-<P>
+</P>
+SimDuration indicates duration of the scenario.  A
+<A HREF="#Duration">Duration</A> entry should follow this keyword.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>LeapSeconds</B> <I>s</I>
+</font>
+</P>
+LeapSeconds indicates the number of leap seconds to be used.  This is
+the positive integer TAI-UTC.  A default value of 37 seconds was used as
+of Jan 2023.  The value is typically not critical as it only affects slowly
+changing states dependent on terrestrial time, such as the ephemerides of
+celestial bodies.  For example, precession and nutation transformations
+can be computed with TAI-UTC equal to zero without affecting accuracy.
+An error in TAI-UTC will have a greater impact on sun, lunar, and
+planetary ephemerides, although the state of celestial objects changes
+relatively slowly and is often computed using lower accuracy analytic
+methods.  TAI-UTC is typically only important when inputting (or
+outputting) GPS time values.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>EcfEciRate</B> <I><A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+EcfEciRate sets the rate at which ECF to ECI transformations will be
+generated.  Over the duration of the scenario, precession, nutation, and
+EOP transformations are compuated at this rate and stored.  When
+required by the eom library, interpolation is used to form the precise
+transformation at a given time.  The modern CIO method allows a rate of
+1 set of transformations per day to be suitable for most high precision
+needs.  For computational efficiency, when running Monte Carlo
+simulations, setting the EcfEciRate to 0 results in the generation of a
+single set of transformations, eliminating the need for interpolation.
+A <A HREF="#Duration">Duration</A> entry should follow this keyword.
+
+
+<A NAME="DateTime"></A><H3>DateTime</H3> 
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>GD</B> <I>YYYY MM DD hh mm ss.s</I>
+</font>
+</P>
+
 Gregorian date with 24 hour time, UTC.  Valid year, month and day values
 are expected.  Time values are not bound to the standard 24 hour, 60
 minutes, and 60 second limits.  They are accumulated relative to 00:00:00 UTC.
 Only the seconds field supports fractional values - all others are integers.
 
+
+<A NAME="Duration"></A><H3>Duration</H3> 
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Days</B> <I>d.d</I>
+</font>
+</P>
+Duration in days, floating point value
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Minutes</B> <I>m.m</I>
+</font>
+</P>
+Duration in minutes, floating point value
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Seconds</B> <I>s.s</I>
+</font>
+</P>
+Duration in seconds, floating point value
+
+
+<A NAME="Units"></A><H3>Sticky Units</H3> 
+
+For those inputs that do not explicitly indicate units, DU, TU, and
+radians are assumed by default.  <Q>Sticky</Q> unit specifiers modify
+the default units for all following entries until updated.  Distance,
+time and angle unit options are:
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>DistanceUnits</B> <I>DU</I><BR>
+<B>DistanceUnits</B> <I>Kilometers</I><BR>
+<B>DistanceUnits</B> <I>Meters</I>
+</font>
+</P>
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>TimeUnits</B> <I>TU</I><BR>
+<B>TimeUnits</B> <I>Minutes</I><BR>
+<B>TimeUnits</B> <I>Seconds</I>
+</font>
+</P>
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>AngleUnits</B> <I>Radians</I><BR>
+<B>AngleUnits</B> <I>Degrees</I>
+</font>
+</P>
+
+<A NAME="Orbit"></A><H3>Orbit Definition</H3> 
+
+Orbit definitions are named objects.  They are defined by the Orbit
+keyword, the name of the object, epoch time, state vector, and
+propagator.  General perturbation (GP) methods require no further
+inputs.  Special Perturbation (SP) methods may include force model
+and integration method options.  If not specified, the force model will
+default to two-body gravity with propagation via RK4 integration.
 
 </BODY>
 </HTML>
