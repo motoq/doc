@@ -48,6 +48,8 @@ should illustrate use of eomx.
 <A HREF="#Duration">Duration</A> <BR>
 <A HREF="#Units">Sticky Units</A> <BR>
 <A HREF="#Orbit">Orbit Definition</A> <BR>
+<A HREF="#OrbitRelative">Relative Orbit Definition</A> <BR>
+<A HREF="#Command">Commands</A> <BR>
 
 
 <A NAME="Overview"></A><H3>Input File Overview</H3>
@@ -306,6 +308,14 @@ Cartesian geocentric celestial reference frame
 
 Cartesian international terrestrial reference frame
 
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>RTC</I>
+</font>
+</P>
+
+Cartesian radial, transverse, cross-track reference frame
+
 
 <A NAME="Orbit"></A><H3>Orbit Definition</H3> 
 
@@ -336,9 +346,9 @@ the epoch using a <A HREF="#DateTime">DateTime</A> input option.  The
 <A HREF="#StateVectorType">state vector type</A> and 
 <A HREF="#ReferenceFrame">reference frame</A> follow.  The final entry
 for GP propagation models is the state vector itself.  The DistanceUnits
-and TimeUnits keywords affect these entries.  SP propagators also
+and TimeUnits keywords affect these entries.  SP methods can also
 include <A HREF="#Gravity">GravityModel</A>
-and <A HREF="#Integrator">Propagator</A> method options.
+and <A HREF="#Integrator">Propagator (Numerical Integration)</A> method.
 
 
 <A NAME="PropagatorModel"></A><H3>Orbit Propagation Models</H3> 
@@ -364,12 +374,10 @@ Vinti's work and implemented by Gim J. Der and Herbert B. Reynolds,
 original available via
 <A HREF="https://arc.aiaa.org/doi/suppl/10.2514/4.866487/">AIAA</A>.
 Unlike most analytic propagators, the Vinti model is initialized with
-state vectors, or those derived directly from osculating element sets (in
-contrast to most GP propagators requiring mean element sets).  It is a
-phenomenal analytic orbit propagator.  For more information, see
+state vectors, or those derived directly from osculating element sets
+(vs. mean element sets).  For more information, see
 <Q>Orbital and Celestial Mechanics</Q>, Nino L. Bonavito, Gim J. Der, and
-John P. Vinti, AIAA, 1998 - an outstanding - mandatory - reference for any
-serious student of astrodynamics or classical mechanics.
+John P. Vinti, AIAA, 1998.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
@@ -387,8 +395,8 @@ versions requiring mean element sets).
 </font>
 </P>
 
-GENPL option implementing classical secular J2 effects in a stable and
-efficient manner.
+GENPL option implementing standard secular J2 effects, best initialized
+with mean element sets.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
@@ -396,7 +404,7 @@ efficient manner.
 </font>
 </P>
 
-GENPL option implementing a highly efficient version of the Vinti
+GENPL option implementing a highly optimized version of the Vinti
 propagator.
 
 <P style="background-color:LightCyan;">
@@ -411,33 +419,35 @@ through the use of numerical integration.
 
 <A NAME="Gravity"></A><H3>Gravity Model</H3> 
 
-SP methods can select the gravity model, GravityModel, to be used.
+SP methods can select the gravity model to be used.
+<I>GravityModel Jn 0</I> is the default if not specified.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Jn d</I>
+<I>GravityModel Jn d</I>
 </font>
 </P>
 
-A simple zonal gravity model supporting up to degree (d) 4.
+A simple zonal gravity model supporting up to degree (<I>d</I>) 4
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Gravt d o</I>
+<I>GravityModel Gravt d o</I>
 </font>
 </P>
 
-GENPL option supporting degree (d) and order (o) inputs.
+GENPL option supporting degree and order <I>d o</I>
 
 
 <A NAME="Integrator"></A><H3>Numerical Integrator</H3> 
 
-SP methods can select the numerical integration method, Propagator, used
-to solve the equations of motion.
+SP methods can select the numerical integration method, used
+to solve the equations of motion.  <I>Propagator RK4</I> is the default
+if not specified.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>RK4</I>
+<I>Propagator RK4</I>
 </font>
 </P>
 
@@ -445,15 +455,104 @@ Standard Runge-Kutta integration method.  Robust, but not efficient.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>GJ</I>
+<I>Propagator GJ</I>
 </font>
 </P>
 
 GENPL option, highly efficient Gauss-Jackson 2nd order integrator with
-on-the-fly step size adjustment to minimize error.
+on-the-fly step size adjustment to minimize error while maximizing
+speed.
 
 
+<A NAME="OrbitRelative"></A><H3>Relative Orbit Definition</H3> 
 
+Allows for a relative orbit to be specified based on a <I>RTC</I>
+relative bounding box and transverse distance offset.  The method is
+based on <Q>Spacecraft Relative Orbit Geometry Description Through Orbit
+Element Differences</Q> by Hanspeter Schaub.  This method of defining a
+bounding box and offset automatically guarantees the energy matching
+constraint.  The resulting orbit definitions are propagated in inertial
+space, not a linearized reference frame intended for control systems
+only.  This method is not limited to circular orbits.
+
+<P>
+
+The syntax is:
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>RelativeOrbit</B> <I>orbit_name template_orbit_name RTC
+dR dT dC deltaT</I>
+</font>
+</P>
+
+The values <I>dR dT dC</I> define the <I>desired</I> bounding box limits
+of the relative orbit.  Some values may be exceeded to meet minimum
+values.  The <I>deltaT</I> parameter is an along-track offset between
+the orbit centers.
+
+
+<A NAME="Command"></A><H3>Commands</H3> 
+
+Commands typially operate on named objects.  Most are affected by the
+<Q>sticky</Q> <I>OutputRate</I> keyword.  Examples:
+
+<Pre>
+Command PrintEphemeris gj_40x40 GCRF gj_40x40_i.e;
+Command PrintEphemeris gj_40x40 ITRF gj_40x40_f.e;
+OutputRate Minutes 1;
+Command PrintRange vinti kep vinti_rng_vk;
+Command PrintRange vinti vintij2 vinti_rng_vvj2;
+Command PrintRTC vinti spj3 vinti_rtc_vsp;
+</Pre>
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>OutputRate</B> <I><A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+<Q>Sticky</Q> setting specifying the rate at which an output should be
+generated.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintEphemeris orbit_name
+<A HREF="#ReferenceFrame">frame</A> output_file_name</I>
+</font>
+</P>
+
+Writes STK <Q>.e</Q> formatted position and velocity ephemeris for the
+specified satellite name.  The output rate is determined internally.
+The filename suffix is user specified (does not default to <Q>.e</Q>).
+Output units are meters and meters/second.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintRange orbit1_name orbit2_name output_file_prefix</I>
+</font>
+</P>
+
+Writes a Matlab/Octave compatible function to the specified filename
+with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
+the range vs. time over the duration of the scenario.  The figure handle
+and data are returned for use.  Output units are specified by
+<I><A HREF="#Units">DistanceUnits</A></I>.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintRTC orbit1_name orbit2_name output_file_prefix</I>
+</font>
+</P>
+
+Writes a Matlab/Octave compatible function to the specified filename
+with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
+the relative position of the second orbit w.r.t. the first, vs. time over
+the duration of the scenario.  The 3D plot is in the traditional radial,
+transverse (in-track), cross-track reference frame used for relative
+orbital dynamics.  The figure handle and data are returned for
+use.  Output units are specified by
+<I><A HREF="#Units">DistanceUnits</A></I>.
 
 <P>
 
