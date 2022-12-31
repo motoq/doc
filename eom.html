@@ -269,6 +269,44 @@ time and angle unit options are:
 </font>
 </P>
 
+
+<A NAME="StateVectorType"></A><H3>State Vector Type</H3> 
+
+The state vector type indicates the type of coordinate system is used to
+specify state vector components.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>CART</I>
+</font>
+</P>
+
+Cartesian coordinates composed of three position and three velocity
+elements.
+
+
+<A NAME="ReferenceFrame"></A><H3>Reference Frame</H3> 
+
+Not all settings taking a reference frame type accept all available
+reference frames.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>GCRF</I>
+</font>
+</P>
+
+Cartesian geocentric celestial reference frame
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>ITRF</I>
+</font>
+</P>
+
+Cartesian international terrestrial reference frame
+
+
 <A NAME="Orbit"></A><H3>Orbit Definition</H3> 
 
 Orbit definitions are named objects.  They are defined by the Orbit
@@ -276,7 +314,148 @@ keyword, the name of the object, epoch time, state vector, and
 propagator.  General perturbation (GP) methods require no further
 inputs.  Special Perturbation (SP) methods may include force model
 and integration method options.  If not specified, the force model will
-default to two-body gravity with propagation via RK4 integration.
+default to two-body gravity with propagation via RK4 integration.  Two
+examples will aid in understanding the input options to be described.
+
+<PRE>
+DistanceUnits  Kilometers;
+TimeUnits Seconds;
+Orbit  vinti    Vinti6   GD 2021 11 12 17 00 00.0
+       CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186;
+Orbit  spj3     SP       GD 2021 11 12 17 00 00.0
+       CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186
+       Propagator  RK4
+       GravityModel  Jn 3;
+       #Propagator  GJ
+       #GravityModel  Gravt 3 0;
+</PRE>
+
+The Orbit keyword is followed by a unique identifier, the orbit name.
+The <A HREF="#PropagatorModel">orbit propagation model</A> is next, followed by
+the epoch using a <A HREF="#DateTime">DateTime</A> input option.  The
+<A HREF="#StateVectorType">state vector type</A> and 
+<A HREF="#ReferenceFrame">reference frame</A> follow.  The final entry
+for GP propagation models is the state vector itself.  The DistanceUnits
+and TimeUnits keywords affect these entries.  SP propagators also
+include <A HREF="#Gravity">GravityModel</A>
+and <A HREF="#Integrator">Propagator</A> method options.
+
+
+<A NAME="PropagatorModel"></A><H3>Orbit Propagation Models</H3> 
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Kepler1</I>
+</font>
+</P>
+
+<Q>Kepler1</Q> two-body GP model based off of Vinti's work and implemented
+by Gim J. Der and Herbert B. Reynolds, original available via
+<A HREF="https://arc.aiaa.org/doi/suppl/10.2514/4.866487/">AIAA</A>.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Vinti6</I>
+</font>
+</P>
+
+<Q>Vinti6</Q> GP model with full J2 and partial J3 zonal effects, based off
+Vinti's work and implemented by Gim J. Der and Herbert B. Reynolds,
+original available via
+<A HREF="https://arc.aiaa.org/doi/suppl/10.2514/4.866487/">AIAA</A>.
+Unlike most analytic propagators, the Vinti model is initialized with
+state vectors, or those derived directly from osculating element sets (in
+contrast to most GP propagators requiring mean element sets).  It is a
+phenomenal analytic orbit propagator.  For more information, see
+<Q>Orbital and Celestial Mechanics</Q>, Nino L. Bonavito, Gim J. Der, and
+John P. Vinti, AIAA, 1998 - an outstanding - mandatory - reference for any
+serious student of astrodynamics or classical mechanics.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>VintiJ2</I>
+</font>
+</P>
+
+The <Q>Vinti6</Q> model described above, but limited to only the J2
+zonal spherical harmonic.  A true J2 propagator (vs. the typical secular
+versions requiring mean element sets).
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>SecJ2</I>
+</font>
+</P>
+
+GENPL option implementing classical secular J2 effects in a stable and
+efficient manner.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>OscJ2</I>
+</font>
+</P>
+
+GENPL option implementing a highly efficient version of the Vinti
+propagator.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>SP</I>
+</font>
+</P>
+
+Special perturbations methods.  The equations of motion are resolved
+through the use of numerical integration.
+
+
+<A NAME="Gravity"></A><H3>Gravity Model</H3> 
+
+SP methods can select the gravity model, GravityModel, to be used.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Jn d</I>
+</font>
+</P>
+
+A simple zonal gravity model supporting up to degree (d) 4.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Gravt d o</I>
+</font>
+</P>
+
+GENPL option supporting degree (d) and order (o) inputs.
+
+
+<A NAME="Integrator"></A><H3>Numerical Integrator</H3> 
+
+SP methods can select the numerical integration method, Propagator, used
+to solve the equations of motion.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>RK4</I>
+</font>
+</P>
+
+Standard Runge-Kutta integration method.  Robust, but not efficient.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>GJ</I>
+</font>
+</P>
+
+GENPL option, highly efficient Gauss-Jackson 2nd order integrator with
+on-the-fly step size adjustment to minimize error.
+
+
+
+
+<P>
 
 </BODY>
 </HTML>
