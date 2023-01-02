@@ -339,9 +339,9 @@ Orbit  vinti    Vinti6   GD 2021 11 12 17 00 00.0
        CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186;
 Orbit  spj3     SP       GD 2021 11 12 17 00 00.0
        CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186
-       Propagator  RK4
+       Propagator  RK4 Minutes 0.0;
        GravityModel  Jn 3;
-       #Propagator  GJ
+       #Propagator  GJ Seconds 0;
        #GravityModel  Gravt 3 0;
 </PRE>
 
@@ -452,21 +452,26 @@ if not specified.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Propagator RK4</I>
+<I>Propagator RK4 <A HREF="#Duration">Duration</A></I>
 </font>
 </P>
 
 Standard Runge-Kutta integration method.  Robust, but not efficient.
+The <I>Duration</I> is the integration step size to use.
+A <I>Duration</I> equivalent to zero will result in the use of a
+default RK4 integration step size.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Propagator GJ</I>
+<I>Propagator GJ <A HREF="#Duration">Duration</A></I>
 </font>
 </P>
 
 GENPL option, highly efficient Gauss-Jackson 2nd order integrator with
 on-the-fly step size adjustment to minimize error while maximizing
-speed.
+speed.  The <I>Duration</I> entry is required by the parser, but the
+setting is currently ignored.  Instead, a default initial integration 
+step size is used and adjusted during propagation.
 
 
 <A NAME="OrbitRelative"></A><H3>Relative Orbit Definition</H3> 
