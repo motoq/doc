@@ -49,6 +49,7 @@ should illustrate use of eomx.
 <A HREF="#Units">Sticky Units</A> <BR>
 <A HREF="#Orbit">Orbit Definition</A> <BR>
 <A HREF="#OrbitRelative">Relative Orbit Definition</A> <BR>
+<A HREF="#OrbitEph">External Ephemerides</A> <BR>
 <A HREF="#Command">Commands</A> <BR>
 <P>
 <A HREF="https://github.com/motoq/eom/tree/master/cases/">
@@ -500,6 +501,22 @@ The values <I>dR dT dC</I> define the <I>desired</I> bounding box limits
 of the relative orbit.  Some values may be exceeded to meet minimum
 values.  The <I>deltaT</I> parameter is an along-track offset between
 the orbit centers.
+
+
+<A NAME="OrbitEph"></A><H3>External Ephemerides</H3> 
+
+Externally generated SP3c is the only format currently supported for
+ingestion.  An example of loading <I>SP3c</I> formatted
+ephemeris from the file <I>nsgf.orb.lageos2.210626.v70.sp3</I>, to be
+accessed via <I>Hermite</I> interpolation, is:
+
+<PRE>
+EphemerisFile nsgf_lageos2  SP3c Hermite nsgf.orb.lageos2.210626.v70.sp3;
+</PRE>
+
+The name to be assigned to the orbit, <I>nsgf_lageos2</I>, and the filename,
+are the only variable entries at this time.  The other entries are
+placeholders to support other file formats and interpolation methods.
 
 
 <A NAME="Command"></A><H3>Commands</H3> 
