@@ -354,6 +354,7 @@ the epoch using a <A HREF="#DateTime">DateTime</A> input option.  The
 for GP propagation models is the state vector itself.  The DistanceUnits
 and TimeUnits keywords affect these entries.  SP methods can also
 include <A HREF="#Gravity">GravityModel</A>
+include <A HREF="#SunGravity">SunGravity</A>
 and <A HREF="#Integrator">Propagator (Numerical Integration)</A> method.
 
 
@@ -445,6 +446,22 @@ A simple zonal gravity model supporting up to degree (<I>d</I>) 4
 GENPL option supporting degree and order <I>d o</I>
 
 
+<A NAME="SunGravity"></A><H3>Sun Gravity Model</H3> 
+
+SP methods can select the model to be used for gravitational
+perturbations due to the sun.  The default is to not incorporate
+solar gravitational effects.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>SunGravity Meeus</I>
+</font>
+</P>
+
+Sun gravitational perturbations with solar ephemeris resolved through
+the method from Chapter 25 of Meeus' "Astronomical Algorithms", 2nd Ed.
+
+
 <A NAME="Integrator"></A><H3>Numerical Integrator</H3> 
 
 SP methods can select the numerical integration method, used
@@ -473,6 +490,15 @@ on-the-fly step size adjustment to minimize error while maximizing
 speed.  The <I>Duration</I> entry is required by the parser, but the
 setting is currently ignored.  Instead, a default initial integration 
 step size is used and adjusted during propagation.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Propagator GJs <A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+GENPL option, GJ propagator employing time regularization.  Better
+suited for elliptical orbits.
 
 
 <A NAME="OrbitRelative"></A><H3>Relative Orbit Definition</H3> 
