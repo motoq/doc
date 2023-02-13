@@ -354,6 +354,7 @@ the epoch using a <A HREF="#DateTime">DateTime</A> input option.  The
 for GP propagation models is the state vector itself.  The DistanceUnits
 and TimeUnits keywords affect these entries.  SP methods can also
 include <A HREF="#Gravity">GravityModel</A>
+include <A HREF="#MoonGravity">MoonGravity</A>
 include <A HREF="#SunGravity">SunGravity</A>
 and <A HREF="#Integrator">Propagator (Numerical Integration)</A> method.
 
@@ -444,6 +445,22 @@ A simple zonal gravity model supporting up to degree (<I>d</I>) 4
 </P>
 
 GENPL option supporting degree and order <I>d o</I>
+
+
+<A NAME="MoonGravity"></A><H3>Moon Gravity Model</H3> 
+
+SP methods can select the model to be used for gravitational
+perturbations due to the moon.  The default is to not incorporate
+lunar gravitational effects.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>MoonGravity Meeus</I>
+</font>
+</P>
+
+Moon gravitational perturbations with lunar ephemeris resolved through
+the method from Chapter 47 of Meeus' "Astronomical Algorithms", 2nd Ed.
 
 
 <A NAME="SunGravity"></A><H3>Sun Gravity Model</H3> 
