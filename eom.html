@@ -427,7 +427,8 @@ through the use of numerical integration.
 
 <A NAME="Gravity"></A><H3>Gravity Model</H3> 
 
-SP methods can select the gravity model to be used.
+SP methods can select the gravity model to be used.  The EGM 2008
+gravity model is employed for all implementations.
 <I>GravityModel Jn 0</I> is the default if not specified.
 
 <P style="background-color:LightCyan;">
@@ -437,6 +438,17 @@ SP methods can select the gravity model to be used.
 </P>
 
 A simple zonal gravity model supporting up to degree (<I>d</I>) 4
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>GravityModel Standard d o</I>
+</font>
+</P>
+
+Standard eom rectangular gravity model supporting degree and order <I>d o</I>
+such that order <= degree.  The implementation is based primarily off
+equations from Vallado's Fundamentals of Astrodynamics and Applications,
+3rd Ed.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
