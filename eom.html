@@ -399,6 +399,18 @@ versions requiring mean element sets).
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
+<I>VintiMod</I>
+</font>
+</P>
+
+The <Q>Vinti6</Q> model described above, but limited to only the J2
+zonal spherical harmonic.  A true J2 propagator (vs. the typical secular
+versions requiring mean element sets).  This version differs from
+<Q>VintiJ2</Q> in that it has been reworked, fully separating
+initialization from propagation, increasing computational efficiency.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
 <I>SecJ2</I>
 </font>
 </P>
@@ -446,7 +458,7 @@ A simple zonal gravity model supporting up to degree (<I>d</I>) 4
 </P>
 
 Standard eom rectangular gravity model supporting degree and order <I>d o</I>
-such that order <= degree.  The implementation is based primarily off
+such that order .LE. degree.  The implementation is based primarily off
 equations from Vallado's Fundamentals of Astrodynamics and Applications,
 3rd Ed.
 
