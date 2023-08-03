@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Technical Notes</TITLE>
+</HEAD>
+<!-- =============================================================== -->
+<DIV ALIGN="center">
+<H1>Technical Notes Relevant to Astrodynamics</H1>
+</DIV>
+
+<A HREF="tnotes/affine_xt.pdf">
+  <B>A Fine Way to Kiss the Hyperellipsoid
+  </B>
+</A>
+<BR>
+A closed form solution determining the intersection of a pointing vector
+from a reference point to an arbitrarily oriented hyperellipsoid is
+presented.  The tangent to the hyperellipsoid from a line originating at
+the reference point, in the direction of the pointing vector, is also
+derived.  The solutions are obtained by transforming the hyperellipsoid
+into a unit n-sphere, followed by a second transformation converting
+the geometry to a unit circle.
+<BR>
+<BR>
+Representation of a hyperellipsoid as a unit n-sphere subject to an
+affine transformation is first illustrated.  Next, the process of
+mapping the three dimensional intersection and tangent point problems to
+two dimensions is described.  This method is then extended to
+n-dimensional space through the generation of an orthonormal
+transformation via the tensor calculus definition of the cross product.
+The two dimensional solutions are derived, concluding with justifying
+why the intersection and tangent points remain valid through the
+application of an affine transformation.
+<BR>
+
+<BR>
+<A HREF="tnotes/omega.pdf">
+  <B>Astrodynamic Pedantry—Earth’s Gravitational
+     Parameter, Equatorial Radius, and Angular Velocity
+  </B>
+</A>
+<BR>
+A great deal of confusion revolves around the earth's gravitational
+parameter, equatorial radius, and angular velocity.  Experience with
+source code from numerous high, medium, and low fidelity astrodynamics
+related modeling tools clearly demonstrates this quandary.  Confusion is
+understandable given past approaches assumed only a single value for
+each constant.  In addition, references that precisely define these
+values are often difficult to interpret.  While the details covered here
+may be pedantic in nature, the devil is quite often in the details when
+it comes to modeling astrodynamics related problems.
+<BR>
+
+<BR>
+<A HREF="tnotes/dcmq.pdf">
+  <B>Quaternion to DCM and Back Again
+  </B>
+</A>
+<BR>
+Given the definition of a quaternion reference frame transformation, the
+conversion from a unit quaternion to a direction cosine matrix and back is
+derived.  The reader is expected to be familiar with basic
+quaternion properties and algebra.  A method of selecting the initial
+quaternion element to solve for utilizing the quaternion norm condition
+to guarantee numerical stability is presented and compared to Shepperd's
+method of inspecting components of the transformation matrix.
+<BR>
+
+
+</BODY>
+</HTML>

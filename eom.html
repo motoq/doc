@@ -292,6 +292,22 @@ specify state vector components.
 Cartesian coordinates composed of three position and three velocity
 elements.
 
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>KEP_T</I>
+</font>
+</P>
+
+Keplerian elements composed of semimajor axis, eccentricity,
+inclination, right ascension of the ascending node, argument of perigee,
+and true anomaly.
+<PRE>
+  AngleUnits  Degrees;
+  # Default units of DU for semimajor axis
+  #               a      e     i      o      w     v
+  KEP_T  GCRF  4.1632  0.741  63.4  345.0  270.0  0.0;
+</PRE>
+
 
 <A NAME="ReferenceFrame"></A><H3>Reference Frame</H3> 
 
@@ -342,7 +358,7 @@ Orbit  spj3     SP       GD 2021 11 12 17 00 00.0
        CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186
        Propagator  RK4 Minutes 0.0;
        GravityModel  Jn 3;
-       #Propagator  GJ Seconds 0;
+       #Propagator  Adams4 Seconds 8.0;
        #GravityModel  Gravt 3 0;
 </PRE>
 
@@ -518,7 +534,18 @@ if not specified.
 Standard Runge-Kutta integration method.  Robust, but not efficient.
 The <I>Duration</I> is the integration step size to use.
 A <I>Duration</I> equivalent to zero will result in the use of a
-default RK4 integration step size.
+default integration step size.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Propagator Adams4 <A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+Fixed step size Adams-Bashforth predictor with Adams-Moulton corrector,
+primed via RK4.  The <I>Duration</I> is the integration step size to use.
+A <I>Duration</I> equivalent to zero will result in the use of a default
+integration step size.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
@@ -539,7 +566,8 @@ step size is used and adjusted during propagation.
 </P>
 
 GENPL option, GJ propagator employing time regularization.  Better
-suited for elliptical orbits.
+suited for elliptical orbits.  As with the <I>GJ</I> propagation,
+<I>Duration</I> is ignored.
 
 
 <A NAME="OrbitRelative"></A><H3>Relative Orbit Definition</H3> 
@@ -649,6 +677,24 @@ with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
 the range vs. time over the duration of the scenario.  The figure handle
 and data are returned for use.  Output units are specified by
 <I><A HREF="#Units">DistanceUnits</A></I>.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintRangeSpectrum orbit1_name orbit2_name
+                  output_file_prefix</I>
+</font>
+</P>
+
+Writes a Matlab/Octave compatible function to the specified filename
+with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
+the range vs. time over the duration of the scenario.  The figure handle
+and data are returned for use.  Output units are specified by
+<I><A HREF="#Units">DistanceUnits</A></I>.  In addition, the spectrum
+of the error is plotted where frequency is revs/period w.r.t. orbit1.  This
+functionality is intended for comparing differences between ephemerides of
+the same orbit definition.  For example, to compare the error between
+SLR based and numerically propagated ephemerides.  Or, say, the
+difference between two analytic propagators.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
