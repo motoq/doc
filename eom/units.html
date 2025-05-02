@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Units</TITLE>
+</HEAD>
+<BODY>
+<!-- =============================================================== -->
+<DIV ALIGN="center">
+<H1>Units</H1>
+</DIV>
+
+For those inputs that do not explicitly indicate units, DU, TU, and
+radians are assumed by default.  <Q>Sticky</Q> unit specifiers modify
+the default units for all following entries until updated.  One DU is
+the scaling radius used by the gravity model
+(<tt>phy_const::km_per_du</tt>).  It is very close to one earth radius
+but tied to the gravity model vs. the ellipsoid model defining the shape
+of the earth.  One TU (Herg) is the time it would take a circular orbit
+with a radius of 1 DU to travel 1 DU.  The gravitational parameter is
+equal to 1 using units of DU and TU.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>DistanceUnits</B> <I>DU</I><BR>
+<B>DistanceUnits</B> <I>Kilometers</I><BR>
+<B>DistanceUnits</B> <I>Meters</I>
+</font>
+</P>
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>TimeUnits</B> <I>TU</I><BR>
+<B>TimeUnits</B> <I>Minutes</I><BR>
+<B>TimeUnits</B> <I>Seconds</I>
+</font>
+</P>
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>AngleUnits</B> <I>Radians</I><BR>
+<B>AngleUnits</B> <I>Degrees</I>
+</font>
+</P>
+
+Some input types require units to be specified.  This typically occurs
+where it would be inconvenient to have to change the default sticky units.
+For example, one set of sticky units would be set to input a batch of
+state vectors and orbital elements (kilometers, seconds, degrees).  The
+time sticky unit could be set to minutes at the end of the scenario
+definition to indicate command output rates.  In the middle, various
+other inputs could vary greatly w.r.t. the most commonly used or
+readable units.
+
+<P>
+
+<DIV ALIGN="center">
+<A HREF="../eom.html">eomx User Guide Home</A>
+</DIV>
+
+</BODY>
+</HTML>

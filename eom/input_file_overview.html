@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Input File Overview</TITLE>
+</HEAD>
+<BODY>
+<!-- =============================================================== -->
+<DIV ALIGN="center">
+<H1>Input File Overview</H1>
+</DIV>
+
+The eomx input files are composed of statements that define the
+simulation scenario.  Some statements define the period of interest and
+general environment settings.  Others create named objects.  Command
+statements then operate on those objects.
+<P>
+Each statement is terminated by a semicolon.  This allows for an object
+definition to have multiple optional settings when default values are
+not desired.  Default values will typically be based on the most simple
+or computationally least expensive options.
+<P>
+Comments begin with the <B>#</B> sign and are effective until the end of
+a line.  The general formatting is free text.  White space between
+values or between lines is ignored.  The end of inputs can be marked
+with the <B>end;</B> statement.
+<P>
+Some statements are configured to allow for multiple options, but
+currently only support one.  For example, date and time inputs require
+the user to specify <B>GD</B> indicating the time format is Gregorian
+date, despite this being the only accepted input format.  The input type
+is required to support additional options in the future.
+<P>
+Here is an example input file that creates two orbits:
+
+<PRE>
+SimStart GD 2021 11 12 17 00 00.0;     # Gregorian date, UTC
+SimDuration Days 1;
+LeapSeconds 37;
+EcfEciRate Minutes 240;
+
+DistanceUnits  Kilometers;             # Sticky distance and time settings
+TimeUnits Seconds;                     # For inputs without unit specifications
+Orbit  kep_test  Kepler1  GD 2021 11 12 17 00 00.0
+       CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186;
+DistanceUnits  DU;
+TimeUnits TU;
+Orbit  t1  Kepler1  GD 2021 11 12 17 00 00.0
+       CART  GCRF      0.05     0.7     0.4  -1.2     0.02    0.3;
+# All text after the next line is ignored
+end;
+Orbit  t2  Kepler1  GD 2021 11 12 17 00 00.0
+       CART  GCRF     -0.1      0.7     0.8  -0.7    -0.6     0.6;
+#      CART  GCRF      0.05     0.7     0.4  -1.2     0.02    0.3;
+</PRE>
+
+With no commands acting on the orbits, the output is limited to indicating
+scenario settings and regurgitating the input orbit definitions:
+
+<PRE>
+Opened in_oe.dat
+
+Simulation Start Time: 2021/11/12 17:00:00.00
+Simulation Stop Time:  2021/11/13 17:00:00.00
+EcfEci Output Rate is 240 minutes
+Leap Seconds (TAI - UTC): 37
+Using dt eps: 1.26496e-07 seconds
+One ER is 6378137 meters
+One DU is 6378136 meters
+One TU is 806.811 seconds
+
+
+  t1
+  2021/11/12 17:00:00.00
+  a: 6745.511 km  e: 0.246935  i: 32.444415°  o: 22.199429°  w: 45.675437°
+  v: 21.697535°  M: 12.818932°  E: 16.941747°
+    {318.907  4464.695  2551.255} km
+    {-9.486439  0.158107  2.371610} km/sec
+  kep_test
+  2021/11/12 17:00:00.00
+  a: 8164.220 km  e: 0.151395  i: 32.863616°  o: 80.338631°  w: 117.862140°
+  v: 2.080706°  M: 1.515940°  E: 1.786339°
+    {-5552.000  -2563.000  3258.000} km
+    {2.149000  -7.539000  -2.186000} km/sec
+</PRE>
+
+The <tt>dt eps</tt> output indicates the amount of time that is considered
+to be zero when encountering boundary problems due to numerical round-off
+when locating time based tabulated values.  For example, when looking up
+ephemeris interpolation objects, if the maximum time associated with the
+interpolator is 60 seconds, and the time computed for interpolation is
+less than 60+eps seconds, then the end node point of the interpolator
+will be used instead of throwing an exception.  The value is based on
+the time it would take a satellite in orbit at sea level to travel 1 mm.
+<P>
+Computational distance and time units are the earth relative canonical
+DU and TU.  One DU is defined by the gravitational scaling radius of the
+system gravity model (EGM 2008 as of 2023).  One DU and the earth's
+gravitational parameter define the Herg, or one TU.  One ER is the
+semimajor axis length used to define the WGS 84 ellipsoid used for the
+transformation from ITRF Cartesian to geodetic (latitude, longitude,
+altitude) coordinates.
+<P>
+Default input units are DU, TU, and radians.  <Q>Sticky</Q> modifier
+statements allow different units to be defined.  For example, before the
+first orbit definition above, the default units are changed to be
+kilometers and seconds.  Statements specifying units directly ignore
+the sticky modifier.
+
+<P>
+
+<DIV ALIGN="center">
+<A HREF="../eom.html">eomx User Guide Home</A>
+</DIV>
+
+</BODY>
+</HTML>
