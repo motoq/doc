@@ -38,6 +38,19 @@ not commas.  The first row is composed of column labels.  The files are
 available at the top of the page from the <I>version metadata</I> links,
 not the unformatted <I>latest version</I> link.
 
+<P>
+
+Some entries are labeled as GENPL (General Program Library) options.
+This is an external astrodynamics library that is not included with this
+repository but is documented here for convenience.  The goal is to provide
+equivalent functionality within the eom library although it is doubtful either
+execution speed nor numerical stability will match that of the genius
+found in algorithms developed for use on hardware of the 60's through early
+80's...  We are all but mere amateurs compared to those who put us on
+the moon laid the foundation to modern astrodynamics---the people who
+wrote the books vs. those of us who busily, poorly, and inefficiently
+attempt to emulate decades old capabilities.  When the library is available,
+it can be enabled during the build process.
 
 <H3>Contents</H3>
 
@@ -46,6 +59,7 @@ not the unformatted <I>latest version</I> link.
 <A HREF="eom/date_time.html">Date and Time</A> <BR>
 <A HREF="eom/duration.html">Duration</A> <BR>
 <A HREF="eom/units.html">Units</A> <BR>
+<A HREF="eom/propagator_config.html">Propagator Configuration</A> <BR>
 <A HREF="#Orbit">Orbit Definition</A> <BR>
 <A HREF="#OrbitRelative">Relative Orbit Definition</A> <BR>
 <A HREF="#OrbitEph">External Ephemerides</A> <BR>
@@ -232,123 +246,6 @@ propagator.
 
 Special perturbations methods.  The equations of motion are resolved
 through the use of numerical integration.
-
-
-<A NAME="Gravity"></A><H3>Gravity Model</H3> 
-
-SP methods can select the gravity model to be used.  The EGM 2008
-gravity model is employed for all implementations.
-<I>GravityModel Jn 0</I> is the default if not specified.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>GravityModel Jn d</I>
-</font>
-</P>
-
-A simple zonal gravity model supporting up to degree (<I>d</I>) 4
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>GravityModel Standard d o</I>
-</font>
-</P>
-
-Standard eom rectangular gravity model supporting degree and order <I>d o</I>
-such that order .LE. degree.  The implementation is based primarily off
-equations from Vallado's Fundamentals of Astrodynamics and Applications,
-3rd Ed.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>GravityModel Gravt d o</I>
-</font>
-</P>
-
-GENPL option supporting degree and order <I>d o</I>
-
-
-<A NAME="MoonGravity"></A><H3>Moon Gravity Model</H3> 
-
-SP methods can select the model to be used for gravitational
-perturbations due to the moon.  The default is to not incorporate
-lunar gravitational effects.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>MoonGravity Meeus</I>
-</font>
-</P>
-
-Moon gravitational perturbations with lunar ephemeris resolved through
-the method from Chapter 47 of Meeus' "Astronomical Algorithms", 2nd Ed.
-
-
-<A NAME="SunGravity"></A><H3>Sun Gravity Model</H3> 
-
-SP methods can select the model to be used for gravitational
-perturbations due to the sun.  The default is to not incorporate
-solar gravitational effects.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>SunGravity Meeus</I>
-</font>
-</P>
-
-Sun gravitational perturbations with solar ephemeris resolved through
-the method from Chapter 25 of Meeus' "Astronomical Algorithms", 2nd Ed.
-
-
-<A NAME="Integrator"></A><H3>Numerical Integrator</H3> 
-
-SP methods can select the numerical integration method, used
-to solve the equations of motion.  <I>Propagator RK4</I> is the default
-if not specified.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>Propagator RK4 <A HREF="#Duration">Duration</A></I>
-</font>
-</P>
-
-Standard Runge-Kutta integration method.  Robust, but not efficient.
-The <I>Duration</I> is the integration step size to use.
-A <I>Duration</I> equivalent to zero will result in the use of a
-default integration step size.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>Propagator Adams4 <A HREF="#Duration">Duration</A></I>
-</font>
-</P>
-
-Fixed step size Adams-Bashforth predictor with Adams-Moulton corrector,
-primed via RK4.  The <I>Duration</I> is the integration step size to use.
-A <I>Duration</I> equivalent to zero will result in the use of a default
-integration step size.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>Propagator GJ <A HREF="#Duration">Duration</A></I>
-</font>
-</P>
-
-GENPL option, highly efficient Gauss-Jackson 2nd order integrator with
-on-the-fly step size adjustment to minimize error while maximizing
-speed.  The <I>Duration</I> entry is required by the parser, but the
-setting is currently ignored.  Instead, a default initial integration 
-step size is used and adjusted during propagation.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>Propagator GJs <A HREF="#Duration">Duration</A></I>
-</font>
-</P>
-
-GENPL option, GJ propagator employing time regularization.  Better
-suited for elliptical orbits.  As with the <I>GJ</I> propagation,
-<I>Duration</I> is ignored.
 
 
 <A NAME="OrbitRelative"></A><H3>Relative Orbit Definition</H3> 

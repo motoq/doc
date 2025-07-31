@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Propagator Configuration</TITLE>
+</HEAD>
+<BODY>
+<!-- =============================================================== -->
+<DIV ALIGN="center">
+<H1>Propagator Configuration</H1>
+</DIV>
+
+The propagator configuration setting defines a set of orbit propagation
+properties applying to special perturbations methods that can be applied
+to multiple orbit definitions.  In other words, multiple
+<A HREF="orbit.html">Orbit</A> types can be created with a single
+propagator definition.  The keyword <B>PropagatorConfig</B> initiates
+this configuration type, followed by an assigned name that is referenced
+when defining an orbit.  Multiple entries per definition can be entered
+with a semicolon marking the end as usual.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>PropagatorConfig</B> <I>config_name</I> ...
+</font>
+</P>
+
+Before listing available options, an example entry will aid in
+clarifying the format:
+
+<PRE>
+PropagatorConfig  grav_srp   GravityModel  Standard 40 40
+#                            GravityModel  Jn 3
+                             MoonGravity  Meeus
+                             SunGravity   Meeus
+                             SRP Spherical 1.5 0.00008
+                             Integrator  Adams4 Seconds 8.0;
+</PRE>
+
+Note the number of parameters following a configuration type depends on
+the entry.  Two gravity models are shown, with the second commented out.
+The first is a standard rectangular gravity model requiring the degree
+and order.  The commented out model model only requires entry of the
+number of zonal harmonics to include---in this case, J3.  The format
+here indicates the type of model (central body gravity model), the
+specific model to use (degree and order vs. lower order zonals only),
+and then the configuration for that model.  In contrast, the lunar
+gravity model only requires the specific type of model to activate as
+there are no other options.
+
+<P>
+
+Special perturbations methods.  The equations of motion are resolved
+through the use of numerical integration.
+
+
+<A NAME="Gravity"></A><H3>Gravity Model</H3> 
+
+SP methods can select the gravity model to be used.  The EGM 2008
+gravity model is employed for all implementations.
+<I>GravityModel Jn 0</I> is the default if not specified.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>GravityModel Jn d</I>
+</font>
+</P>
+
+A simple zonal gravity model supporting up to degree (<I>d</I>) 4
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>GravityModel Standard d o</I>
+</font>
+</P>
+
+Standard eom rectangular gravity model supporting degree and order <I>d o</I>
+such that order .LE. degree.  The implementation is based primarily off
+equations from Vallado's Fundamentals of Astrodynamics and Applications,
+3rd Ed.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>GravityModel Gravt d o</I>
+</font>
+</P>
+
+GENPL option supporting degree and order <I>d o</I>
+
+
+<A NAME="MoonGravity"></A><H3>Moon Gravity Model</H3> 
+
+SP methods can select the model to be used for gravitational
+perturbations due to the moon.  The default is to not incorporate
+lunar gravitational effects.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>MoonGravity Meeus</I>
+</font>
+</P>
+
+Moon gravitational perturbations with lunar ephemeris resolved through
+the method from Chapter 47 of Meeus' "Astronomical Algorithms", 2nd Ed.
+
+
+<A NAME="SunGravity"></A><H3>Sun Gravity Model</H3> 
+
+SP methods can select the model to be used for gravitational
+perturbations due to the sun.  The default is to not incorporate
+solar gravitational effects.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>SunGravity Meeus</I>
+</font>
+</P>
+
+Sun gravitational perturbations with solar ephemeris resolved through
+the method from Chapter 25 of Meeus' "Astronomical Algorithms", 2nd Ed.
+
+
+<A NAME="Integrator"></A><H3>Numerical Integrator</H3> 
+
+SP methods can select the numerical integration method, used
+to solve the equations of motion.  <I>Propagator RK4</I> is the default
+if not specified.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Propagator RK4 <A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+Standard Runge-Kutta integration method.  Robust, but not efficient.
+The <I>Duration</I> is the integration step size to use.
+A <I>Duration</I> equivalent to zero will result in the use of a
+default integration step size.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Propagator Adams4 <A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+Fixed step size Adams-Bashforth predictor with Adams-Moulton corrector,
+primed via RK4.  The <I>Duration</I> is the integration step size to use.
+A <I>Duration</I> equivalent to zero will result in the use of a default
+integration step size.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Propagator GJ <A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+GENPL option, highly efficient Gauss-Jackson 2nd order integrator with
+on-the-fly step size adjustment to minimize error while maximizing
+speed.  The <I>Duration</I> entry is required by the parser, but the
+setting is currently ignored.  Instead, a default initial integration 
+step size is used and adjusted during propagation.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Propagator GJs <A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+GENPL option, GJ propagator employing time regularization.  Better
+suited for elliptical orbits.  As with the <I>GJ</I> propagation,
+<I>Duration</I> is ignored.
+
+
+<P>
+
+<DIV ALIGN="center">
+<A HREF="../eom.html">eomx User Guide Home</A>
+</DIV>
+
+</BODY>
+</HTML>
