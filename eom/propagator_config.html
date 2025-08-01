@@ -50,9 +50,6 @@ there are no other options.
 
 <P>
 
-Special perturbations methods.  The equations of motion are resolved
-through the use of numerical integration.
-
 
 <A NAME="Gravity"></A><H3>Gravity Model</H3> 
 
@@ -70,7 +67,7 @@ A simple zonal gravity model supporting up to degree (<I>d</I>) 4
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>GravityModel Standard d o</I>
+<I>GravityModel Standard degree order</I>
 </font>
 </P>
 
@@ -85,7 +82,9 @@ equations from Vallado's Fundamentals of Astrodynamics and Applications,
 </font>
 </P>
 
-GENPL option supporting degree and order <I>d o</I>
+GENPL option supporting degree and order <I>d o</I>.  The model supports
+non-rectangular and sparse entries, but those options have not yet been
+configured through the eomx interface.
 
 
 <A NAME="MoonGravity"></A><H3>Moon Gravity Model</H3> 
@@ -103,6 +102,15 @@ lunar gravitational effects.
 Moon gravitational perturbations with lunar ephemeris resolved through
 the method from Chapter 47 of Meeus' "Astronomical Algorithms", 2nd Ed.
 
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>MoonGravity Ephemeris</I>
+</font>
+</P>
+
+This option interpolates JPL derived precision ephemerides of the moon
+(<A HREF="jpl_ephemerides.html">JPL Ephemerides</A>).
+
 
 <A NAME="SunGravity"></A><H3>Sun Gravity Model</H3> 
 
@@ -119,16 +127,40 @@ solar gravitational effects.
 Sun gravitational perturbations with solar ephemeris resolved through
 the method from Chapter 25 of Meeus' "Astronomical Algorithms", 2nd Ed.
 
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>SunGravity Ephemeris</I>
+</font>
+</P>
+
+This option interpolates JPL derived precision ephemerides of the sun
+(<A HREF="jpl_ephemerides.html">JPL Ephemerides</A>).
+
+
+<A NAME="OtherGravity"></A><H3>Planetary Gravity</H3> 
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>OtherGravity</I>
+</font>
+</P>
+
+This option interpolates JPL derived precision ephemerides of the nine
+planets using JPL derived precision ephemerides
+(<A HREF="jpl_ephemerides.html">JPL Ephemerides</A>).  Planetary third
+body gravitational effects is currently an all or nothing option, for
+now.
+
 
 <A NAME="Integrator"></A><H3>Numerical Integrator</H3> 
 
-SP methods can select the numerical integration method, used
-to solve the equations of motion.  <I>Propagator RK4</I> is the default
+SP methods can select the numerical integration method used
+to solve the equations of motion.  <I>Integrator RK4</I> is the default
 if not specified.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Propagator RK4 <A HREF="#Duration">Duration</A></I>
+<I>Integrator RK4 <A HREF="duration.html">Duration</A></I>
 </font>
 </P>
 
@@ -139,7 +171,7 @@ default integration step size.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Propagator Adams4 <A HREF="#Duration">Duration</A></I>
+<I>Integrator Adams4 <A HREF="duration.html">Duration</A></I>
 </font>
 </P>
 
@@ -150,7 +182,7 @@ integration step size.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Propagator GJ <A HREF="#Duration">Duration</A></I>
+<I>Integrator GJ <A HREF="duration.html">Duration</A></I>
 </font>
 </P>
 
@@ -162,7 +194,7 @@ step size is used and adjusted during propagation.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<I>Propagator GJs <A HREF="#Duration">Duration</A></I>
+<I>Integrator GJs <A HREF="duration.html">Duration</A></I>
 </font>
 </P>
 
