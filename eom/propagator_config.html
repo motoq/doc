@@ -161,9 +161,29 @@ now.
 </P>
 
 A custom spherical solar radiation pressure model developed for
-generation of ephemerides for the geodesy satellites.  <I>AoM</I>
-is the effective area over mass in units of meters square per kilogram.
-<I>Cr</I>...
+use with the geodesy satellites.  <I>Cr</I> is a reflectivity coefficient.
+The portion of the value from zero to one represents the proportion of the
+SRP acting along the incident ray direction.  Zero would indicate a
+completly translucent, non-interactive body, essentially disabling SRP
+effects.  Any portion of <I>Cr</I> in excess of one acts along the line
+from the satellite towards the center of the earth.  <I>Cr</I>
+essentially dictates how the solar radiation pressure is distributed
+through a linear combination of the sun to satellite and satellite to
+earth vectors.  This approach is showing promise for the 2 rev/day
+Etalon-1/2 spaceballs for which inclusion of SRP is essential to
+getting the 1 week orbit propagation error below 5 meters.
+
+<P>
+
+<I>AoM</I> is the <I>effective</I> area over mass ratio.  Units are
+currently required to be square meters per kilogram.
+
+<P>
+
+A more detailed writeup on this model based on fitting precision SLR
+ephemerides will be created.  For now, it should be understood <I>Cr</I>
+and <I>AoM</I> are fit parameters using a fixed 4.57e-6 N/m^2 solar
+radiation pressure value.
 
 
 <A NAME="Integrator"></A><H3>Numerical Integrator</H3> 
@@ -182,6 +202,16 @@ Standard Runge-Kutta integration method.  Robust, but not efficient.
 The <I>Duration</I> is the integration step size to use.
 A <I>Duration</I> equivalent to zero will result in the use of a
 default integration step size.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>Integrator RK4s <A HREF="duration.html">Duration</A></I>
+</font>
+</P>
+
+Runge-Kutta with time regularization integration method.  Still
+experimental---probably best to consider as a placeholder for more time
+regularization options.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
