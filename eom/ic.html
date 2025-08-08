@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Initial Conditions</TITLE>
+</HEAD>
+<BODY>
+<!-- =============================================================== -->
+<DIV ALIGN="center">
+<H1>Initial Conditions</H1>
+</DIV>
+
+An orbit may be defined given a state vector and reference
+frame.  Within eom, state vectors are composed of six parameters and an
+associated epoch time.  Using this definition, the state vector alone
+typically will not be sufficient to accurately propagate an orbit.  For
+SP methods, additional information about how the state vector was fit will be
+required
+(<A HREF="propagator_config.html">Propagator Configuration</A>).
+
+
+<A NAME="StateVectorType"></A><H3>State Vector Type</H3> 
+
+The state vector type indicates the coordinate system used to
+specify state vector components.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>CART</I>
+</font>
+</P>
+
+Cartesian coordinates composed of three position and three velocity
+elements.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>KEP_T</I>
+</font>
+</P>
+
+Keplerian elements composed of semimajor axis, eccentricity,
+inclination, right ascension of the ascending node, argument of perigee,
+and true anomaly.  Only earth centered inertial reference frames may be
+used with this option.
+<PRE>
+  AngleUnits  Degrees;
+  # Default units of DU for semimajor axis
+  #               a      e     i      o      w     v
+  KEP_T  GCRF  4.1632  0.741  63.4  345.0  270.0  0.0;
+</PRE>
+
+
+<A NAME="ReferenceFrame"></A><H3>Reference Frame</H3> 
+
+Not all settings taking a reference frame type accept all available
+reference frames.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>GCRF</I>
+</font>
+</P>
+
+Cartesian geocentric celestial reference frame
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>ITRF</I>
+</font>
+</P>
+
+Cartesian international terrestrial reference frame
+
+<P>
+
+<DIV ALIGN="center">
+<A HREF="../eom.html">eomx User Guide Home</A>
+</DIV>
+
+</BODY>
+</HTML>
