@@ -11,43 +11,49 @@
 </DIV>
 
 
-
-
 <A NAME="Orbit"></A><H3>Orbit Definition</H3> 
 
 Orbit definitions are named objects.  They are defined by the Orbit
 keyword, the name of the object, epoch time, state vector, and
 propagator.  General perturbation (GP) methods require no further
-inputs.  Special Perturbation (SP) methods may include force model
-and integration method options.  If not specified, the force model will
-default to two-body gravity with propagation via RK4 integration.  Two
-examples will aid in understanding the input options to be described.
+inputs.  Special Perturbation (SP) methods should include a 
+<A HREF="propagator_config.html">Propagator</A> entry otherwise the
+default model will be used.
+
+<P>
+
+Four type of orbit definitions are illustrated by the below example:
 
 <PRE>
 DistanceUnits  Kilometers;
 TimeUnits Seconds;
-Orbit  vinti    Vinti6   GD 2021 11 12 17 00 00.0
-       CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186;
-Orbit  spj3     SP       GD 2021 11 12 17 00 00.0
-       CART  GCRF  -5552.0  -2563.0  3258.0   2.149  -7.539  -2.186
-       Propagator  RK4 Minutes 0.0;
-       GravityModel  Jn 3;
-       #Propagator  Adams4 Seconds 8.0;
-       #GravityModel  Gravt 3 0;
+Orbit  starlette  SP  GD 2022  2  8  0  0  0.00
+       CART  ITRF  -5742.304959   2727.319108   3934.171919
+                   0.1162318900 -5.6156839000  3.9837925000
+                   Propagator grav_only;
+Orbit  vinti_starlette  OscJ2 GD  2022  2  8  0  0  00.0
+       CART  ITRF  -5742.304959   2727.319108   3934.171919
+                   0.1162318900 -5.6156839000  3.9837925000;
+TLE  sgp4_starlette;
+1 07646U 75010A   22038.91861585 -.00000134  00000-0  53389-5 0  9996
+2 07646  49.8229 261.4733 0205735 209.7169 149.1906 13.82310827374561
+EphemerisFile nsgf_starlette  SP3c Hermite nsgf.orb.starlette.220212.v00.sp3;
 </PRE>
 
-The Orbit keyword is followed by a unique identifier, the orbit name.
-The <A HREF="#PropagatorModel">orbit propagation model</A> is next, followed by
-the epoch using a <A HREF="#DateTime">DateTime</A> input option.  The
-<A HREF="#StateVectorType">state vector type</A> and 
-<A HREF="#ReferenceFrame">reference frame</A> follow.  The final entry
-for GP propagation models is the state vector itself.  The DistanceUnits
-and TimeUnits keywords affect these entries.  SP methods can also
-include <A HREF="#Gravity">GravityModel</A>
-include <A HREF="#MoonGravity">MoonGravity</A>
-include <A HREF="#SunGravity">SunGravity</A>
-and <A HREF="#Integrator">Propagator (Numerical Integration)</A> method.
+<P>
 
+The first two orbit definitions are initiated by the Orbit keyword followed
+by a unique identifier, the orbit name.
+The <A HREF="#PropagatorModel">orbit propagation model</A> is next, followed by
+the epoch using a <A HREF="date_time.html">DateTime</A> input option.  The
+<A HREF="ic.html#StateVectorType">state vector type</A> and 
+<A HREF="ic.html#ReferenceFrame">reference frame</A> follow.  The final
+required entry is the state vector itself.  SP methods will typically supply
+a <A HREF="propagator_config.html">Propagator</A> to use.
+<A HREF="units.html">DistanceUnits</A> and
+<A HREF="units.html">TimeUnits</A> keywords affect these entries.
+
+<P>
 
 <A NAME="PropagatorModel"></A><H3>Orbit Propagation Models</H3> 
 
