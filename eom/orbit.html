@@ -10,52 +10,94 @@
 <H1>Orbit Definitions</H1>
 </DIV>
 
+<H3>Orbit Definition Types</H3> 
 
-<A NAME="Orbit"></A><H3>Orbit Definition</H3> 
+<A HREF="#Orbit">Orbit Propagator Models</A>
+<P>
+<A HREF="#OrbitRelative">Relative Orbit</A>
+<P>
+<A HREF="#OrbitEph">External Ephemerides</A>
 
-Orbit definitions are named objects.  They are defined by the Orbit
-keyword, the name of the object, epoch time, state vector, and
-propagator.  General perturbation (GP) methods require no further
-inputs.  Special Perturbation (SP) methods should include a 
+<A NAME="Orbit"></A><H3>Orbit Propagator Models</H3>
+
+The <I>Orbit</I> keyword is used to define either general perturbation
+(GP) or special Perturbation (SP) methods for orbit propagation.  The
+name of the object, propagator model, epoch, and state vector are
+required after the <I>Orbit</I> keyword.  GP methods require no further
+inputs.  SP methods should include a
 <A HREF="propagator_config.html">Propagator</A> entry otherwise the
-default model will be used.
+default model will be used.  Relative orbits are based on a previously
+defined orbit and external ephemerides are read in from a file.
 
 <P>
 
-Four type of orbit definitions are illustrated by the below example:
+Five type of orbit definitions are illustrated by the below example.
 
 <PRE>
+SimStart GD 2022  2  8  0  0  0.00;
+SimDuration Days 3.75;
+LeapSeconds 37;
+EcfEciRate Minutes 240;
 DistanceUnits  Kilometers;
 TimeUnits Seconds;
-Orbit  starlette  SP  GD 2022  2  8  0  0  0.00
+PropagatorConfig  grav_srp   GravityModel  Standard 40 40
+                             MoonGravity  Meeus
+                             SunGravity   Meeus
+                             SRP Spherical 1.5 0.00008
+                             Integrator  GJ Seconds 0;
+#
+# Start Orbit Definitions
+#
+  # Precision SLR based ephemeris from NASA’s Crustal Dynamics
+  # Data Information System (CDDIS) 
+EphemerisFile nsgf_starlette  SP3c Hermite nsgf.orb.starlette.220212.v00.sp3;
+  # SP Method using initialized with first state vector from
+  # nsgf.orb.starlette.220212.v00.sp3 above
+Orbit  sp_starlette  SP  GD 2022  2  8  0  0  0.00
        CART  ITRF  -5742.304959   2727.319108   3934.171919
                    0.1162318900 -5.6156839000  3.9837925000
-                   Propagator grav_only;
-Orbit  vinti_starlette  OscJ2 GD  2022  2  8  0  0  00.0
+                   Propagator grav_srp;
+  # GP Vinti J2-only with same state vector as SP method
+Orbit  vinti_starlette  VintiJ2 GD  2022  2  8  0  0  00.0
        CART  ITRF  -5742.304959   2727.319108   3934.171919
                    0.1162318900 -5.6156839000  3.9837925000;
+  # SGP4:  Corresponding TLE from space-track.org
 TLE  sgp4_starlette;
 1 07646U 75010A   22038.91861585 -.00000134  00000-0  53389-5 0  9996
 2 07646  49.8229 261.4733 0205735 209.7169 149.1906 13.82310827374561
-EphemerisFile nsgf_starlette  SP3c Hermite nsgf.orb.starlette.220212.v00.sp3;
+  # Relative orbit based on SP version of Starlette
+RelativeOrbit  rel_starlette  sp_starlette  RTCT  5.0  0.0  5.0  0.0;
+#
+# End Orbit Definitions
+#
+TimeUnits Minutes;
+OutputRate Minutes 5;
+Command PrintRangeSpectrum nsgf_starlette sp_starlette starlette_rs;
+Command PrintRangeSpectrum nsgf_starlette vinti_starlette starlette_vinti_rs;
+Command PrintRangeSpectrum nsgf_starlette sgp4_starlette starlette_sgp4_rs;
+OutputRate Minutes 1;
+Command PrintRTC  nsgf_starlette sp_starlette starlette_rtc;
+Command PrintRTC  vinti_starlette rel_starlette starlette_rel_rtc;
 </PRE>
 
 <P>
 
-The first two orbit definitions are initiated by the Orbit keyword followed
-by a unique identifier, the orbit name.
-The <A HREF="#PropagatorModel">orbit propagation model</A> is next, followed by
-the epoch using a <A HREF="date_time.html">DateTime</A> input option.  The
-<A HREF="ic.html#StateVectorType">state vector type</A> and 
-<A HREF="ic.html#ReferenceFrame">reference frame</A> follow.  The final
-required entry is the state vector itself.  SP methods will typically supply
-a <A HREF="propagator_config.html">Propagator</A> to use.
-<A HREF="units.html">DistanceUnits</A> and
-<A HREF="units.html">TimeUnits</A> keywords affect these entries.
+The first orbit loads an SLR based ephemeris file from NASA’s Crustal Dynamics
+Data Information System (CDDIS).  The EphemerisFile keyword is followed
+by the orbit name and filename to read.  The second and third orbits are
+initiated with the Orbit keyword, epoch, and state vector.  The TLE
+orbit definition requires an SGP4 compatible two line element set.
+Finally, a relative orbit is defined where a previously created orbit
+acts as a template.
 
 <P>
 
-<A NAME="PropagatorModel"></A><H3>Orbit Propagation Models</H3> 
+<A NAME="OrbitModel"></A><H4>Orbit Model Types</H4>
+
+The <I>Orbit</I> keyword is used to create orbits based on a state
+vector (Cartesian or orbital elements) and epoch time.  SP methods
+should also define a <A HREF="propagator_config.html">PropagatorConfig</A>
+entry.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
@@ -130,10 +172,11 @@ propagator.
 </P>
 
 Special perturbations methods.  The equations of motion are resolved
-through the use of numerical integration.
+through the use of numerical integration of models based on the
+<A HREF="propagator_config.html">propagator configuration</A>.
 
 
-<A NAME="OrbitRelative"></A><H3>Relative Orbit Definition</H3> 
+<A NAME="OrbitRelative"></A><H3>Relative Orbit</H3> 
 
 Allows for a relative orbit to be specified based on a <I>RTC</I>
 relative bounding box and transverse distance offset.  The method is
