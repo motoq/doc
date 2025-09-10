@@ -85,10 +85,10 @@ Command PrintRTC  vinti_starlette rel_starlette starlette_rel_rtc;
 The first orbit loads an SLR based ephemeris file from NASA’s Crustal Dynamics
 Data Information System (CDDIS).  The EphemerisFile keyword is followed
 by the orbit name and filename to read.  The second and third orbits are
-initiated with the Orbit keyword, epoch, and state vector.  The TLE
-orbit definition requires an SGP4 compatible two line element set.
-Finally, a relative orbit is defined where a previously created orbit
-acts as a template.
+initiated with the Orbit keyword, orbit name, propagation model,  epoch,
+and state vector.  The TLE orbit definition requires an SGP4 compatible two
+line element set.  Finally, a relative orbit is defined where a previously
+created orbit acts as a template.
 
 <P>
 
@@ -97,7 +97,15 @@ acts as a template.
 The <I>Orbit</I> keyword is used to create orbits based on a state
 vector (Cartesian or orbital elements) and epoch time.  SP methods
 should also define a <A HREF="propagator_config.html">PropagatorConfig</A>
-entry.
+entry.  The general form is:
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Orbit</B> name <I>Model</I> Epoch State ...;
+</font>
+</P>
+
+The available <I>Model</I> types are:
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
@@ -185,7 +193,14 @@ Element Differences</Q> by Hanspeter Schaub.  This method of defining a
 bounding box and offset automatically guarantees the energy matching
 constraint.  The resulting orbit definitions are propagated in inertial
 space, not a linearized reference frame intended for control systems
-only.  This method is not limited to circular orbits.
+only.  This method is not limited to circular orbits.  However, as
+implemented, for the orbits to maintain the indicated offsets, a
+Keplerian (2-body) orbit must be used as the template.  The higher
+fidelity the template orbit, the greater the divergence of the orbits
+over time.  As is, this option is useful when studying differential
+perturbations (to sell a shortcoming as a feature...).  The option to
+properly "sync" the relative orbit to the template orbit is on the TODO
+list...
 
 <P>
 
@@ -199,9 +214,35 @@ dR dT dC deltaT</I>
 </P>
 
 The values <I>dR dT dC</I> define the <I>desired</I> bounding box limits
-of the relative orbit.  Some values may be exceeded to meet minimum
-values.  The <I>deltaT</I> parameter is an along-track offset between
-the orbit centers.
+of the relative orbit w.r.t. radial, transverse, and cross-track
+distances, respectively.  Actual distances may be exceeded by the
+resulting orbit due to physics.
+The <I>deltaT</I> parameter is an along-track offset between
+the orbit centers.  The orbit offsets units are dictated by the
+<A HREF="units.html">DistanceUnits</A> setting.
+Relative orbits can only be defined by <I>Orbit</I> keyword based
+definitions.  TLEs and external ephemerides currently do not support
+relative orbit creation.
+
+
+<A NAME="TLE"></A><H3>TLE Propagation via SGP4</H3> 
+
+NORAD formatted TLEs are propagated using Vallado's implementation of
+SGP4 (see source code for details).  Note the <I>TLE</I> keyword is
+followed by the assigned orbit name and a semicolon.  The TLE must
+immediately follow.  This is a break from the typical eomx free format
+input style.  After the line with the <I>TLE</I> keyword, the next two
+lines are read in and parsed.  The checksum is ignored.
+
+<PRE>
+<font face = "courier">
+<P style="background-color:LightCyan;">
+<B>TLE</B>  sgp4_starlette;
+1 07646U 75010A   22038.91861585 -.00000134  00000-0  53389-5 0  9996
+2 07646  49.8229 261.4733 0205735 209.7169 149.1906 13.82310827374561
+</font>
+</P>
+</PRE>
 
 
 <A NAME="OrbitEph"></A><H3>External Ephemerides</H3> 
@@ -211,10 +252,13 @@ ingestion.  Examples of loading <I>SP3c</I> formatted
 ephemeris from the file <I>nsgf.orb.lageos2.210626.v70.sp3</I> with
 orbit names <I>nsgf_lageos2h</I> and <I>nsgf_lageos2t</I> are:
 
-<PRE>
-EphemerisFile nsgf_lageos2h  SP3c Hermite nsgf.orb.lageos2.210626.v70.sp3;
-EphemerisFile nsgf_lageos2t  SP3c Chebyshev nsgf.orb.lageos2.210626.v70.sp3;
-</PRE>
+<font face = "courier">
+<P style="background-color:LightCyan;">
+<B>EphemerisFile</B> nsgf_lageos2h  SP3c Hermite nsgf.orb.lageos2.210626.v70.sp3;
+<BR>
+<B>EphemerisFile</B> nsgf_lageos2t  SP3c Chebyshev nsgf.orb.lageos2.210626.v70.sp3;
+</font>
+</P>
 
 <I>Hermite</I> interpolation is performed for the first entry.  Each
 interpolator is fit to two state vectors (position and velocity) with
