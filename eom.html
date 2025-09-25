@@ -55,9 +55,8 @@ GENPL aids in validation and benchmarking of new functionality.
 <A HREF="eom/propagator_config.html">Propagator Configuration</A> <BR>
 <A HREF="eom/ic.html">Initial Conditions</A> <BR>
 <A HREF="eom/orbit.html">Orbit Definition</A> <BR>
-<A HREF="#OrbitEph">External Ephemerides</A> <BR>
-<A HREF="#GroundPoint">Ground Point Definition</A> <BR>
-<A HREF="#GpAccess">Access Analysis to Ground Points</A> <BR>
+<A HREF="eom/ground_point.html">Ground Point Definition</A> <BR>
+<A HREF="eom/access_gp.html">Access Analysis to Ground Points</A> <BR>
 <A HREF="#Command">Commands</A> <BR>
 <P>
 <A HREF="https://github.com/motoq/eom/tree/master/cases/">
@@ -67,65 +66,6 @@ Example Input Case Files</A>
 Example Projects Built with eom via Makefile</A>
 
 <P>
-
-
-<A NAME="GroundPoint"></A><H3>Ground Point Definition</H3> 
-
-Ground points can be defined given geodetic coordinates latitude,
-longitude, and altitude (w.r.t. the ellipsoid).  Units are based on
-default or preceding <Q>Sticky</Q> entries.
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<B>GroundPoint</B> <I>name geodetic_latitude longitude altitude</I>
-</font>
-</P>
-
-
-<A NAME="GpAccess"></A><H3>Access Analysis to Ground Points</H3> 
-
-Access analysis from a ground point to an orbit can be defined with the
-<I>GroundPoint</I> keyword:
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<B>Access  GroundPointAccess</B> <I>AccessModel orbit_name
-ground_point_name</I>
-</font>
-</P>
-
-Two access models are supported.  The <I>Standard</I> model uses a
-variable step size based on the rate of change in true anomaly to
-locate the next access window.  Once the access window is located, a
-bisection method is used to refine the precise rise and set times.
-This method is robust and fast.  A significantly slower <I>Debug</I>
-option is also available that uses a small fixed step size to search
-for access windows.
-
-By default, access is generated based on line if sight visibility from
-the ground point to the satellite.  This occurs when the elevation of
-the satellite w.r.t. the  ground point, relative to the plane tangent to
-the ellipsoid, is zero.  Currently, only the minimum elevation is
-configurable through an additional line:
-
-<P style="background-color:LightCyan;">
-<font face = "courier">
-<I>MinimumElevation d</I>
-</font>
-</P>
-
-The following illustrates creating a ground point location named
-<I>gp01</I> where positive latitude implies north and positive longitude
-implies east.  Access to this location by a satellite named
-<I>leosat</I> is to be performed with a minimum ground elevation
-constraint of -5 degrees.
-
-<PRE>
-AngleUnits  Degrees;
-GroundPoint gp01 LLA  43.0  30.0  0.0;
-Access  GroundPointAccess  Standard  leosat gp01
-                           MinimumElevation  -5.0;
-</PRE>
 
 
 <A NAME="Command"></A><H3>Commands</H3> 

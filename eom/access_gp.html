@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Access Analysis to Ground Points</TITLE>
+</HEAD>
+<BODY>
+<!-- =============================================================== -->
+<DIV ALIGN="center">
+<H1>Access Analysis to Ground Points</H1>
+</DIV>
+
+
+Access analysis from a ground point to an orbit can be defined with the
+<I>GroundPoint</I> keyword:
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Access  GroundPointAccess</B> <I>AccessModel orbit_name
+ground_point_name</I>
+</font>
+</P>
+
+Two access models are supported.  The <I>Standard</I> model uses a
+variable step size based on the rate of change in true anomaly to
+locate the next access window.  Once the access window is located, a
+bisection method is used to refine the precise rise and set times.
+This method is robust and fast.  A significantly slower <I>Debug</I>
+option is also available that uses a small fixed step size to search
+for access windows.
+
+By default, access is generated based on line if sight visibility from
+the ground point to the satellite.  This occurs when the elevation of
+the satellite w.r.t. the  ground point, relative to the plane tangent to
+the ellipsoid, is zero.  Currently, only the minimum elevation is
+configurable through an additional line:
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>MinimumElevation d</I>
+</font>
+</P>
+
+The following illustrates creating a ground point location named
+<I>gp01</I> where positive latitude implies north and positive longitude
+implies east.  Access to this location by a satellite named
+<I>leosat</I> is to be performed with a minimum ground elevation
+constraint of -5 degrees.
+
+<PRE>
+AngleUnits  Degrees;
+GroundPoint gp01 LLA  43.0  30.0  0.0;
+Access  GroundPointAccess  Standard  leosat gp01
+                           MinimumElevation  -5.0;
+</PRE>
+
+
+<DIV ALIGN="center">
+<A HREF="../eom.html">eomx User Guide Home</A>
+</DIV>
+
+</BODY>
+</HTML>
