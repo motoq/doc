@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+         "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>Commands</TITLE>
+</HEAD>
+<BODY>
+<!-- =============================================================== -->
+<DIV ALIGN="center">
+<H1>Commands</H1>
+</DIV>
+
+
+Commands typially operate on named objects.  Most are affected by the
+<Q>sticky</Q> <I>OutputRate</I> keyword.  Examples:
+
+<Pre>
+Command PrintEphemeris gj_40x40 GCRF gj_40x40_i.e;
+Command PrintEphemeris gj_40x40 ITRF gj_40x40_f.e;
+OutputRate Minutes 1;
+Command PrintRange vinti kep vinti_rng_vk;
+Command PrintRange vinti vintij2 vinti_rng_vvj2;
+Command PrintRTC vinti spj3 vinti_rtc_vsp;
+</Pre>
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>OutputRate</B> <I><A HREF="#Duration">Duration</A></I>
+</font>
+</P>
+
+<Q>Sticky</Q> setting specifying the rate at which an output should be
+generated.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintEphemeris orbit_name
+<A HREF="#ReferenceFrame">frame</A> output_file_name</I>
+</font>
+</P>
+
+Writes STK <Q>.e</Q> formatted position and velocity ephemeris for the
+specified satellite name.  The output rate is determined internally.
+The filename suffix is user specified (does not default to <Q>.e</Q>).
+Output units are meters and meters/second.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintRange orbit1_name orbit2_name output_file_prefix</I>
+</font>
+</P>
+
+Writes a Matlab/Octave compatible function to the specified filename
+with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
+the range vs. time over the duration of the scenario.  The figure handle
+and data are returned for use.  Output units are specified by
+<I><A HREF="#Units">DistanceUnits</A></I>.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintRangeSpectrum orbit1_name orbit2_name
+                  output_file_prefix</I>
+</font>
+</P>
+
+Writes a Matlab/Octave compatible function to the specified filename
+with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
+the range vs. time over the duration of the scenario.  The figure handle
+and data are returned for use.  Output units are specified by
+<I><A HREF="#Units">DistanceUnits</A></I>.  In addition, the spectrum
+of the error is plotted where frequency is revs/period w.r.t. orbit1.  This
+functionality is intended for comparing differences between ephemerides of
+the same orbit definition.  For example, to compare the error between
+SLR based and numerically propagated ephemerides.  Or, say, the
+difference between two analytic propagators.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintRTC orbit1_name orbit2_name output_file_prefix</I>
+</font>
+</P>
+
+Writes a Matlab/Octave compatible function to the specified filename
+with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
+the relative position of the second orbit w.r.t. the first, vs. time over
+the duration of the scenario.  The 3D plot is in the traditional radial,
+transverse (in-track), cross-track reference frame used for relative
+orbital dynamics.  The figure handle and data are returned for
+use.  Output units are specified by
+<I><A HREF="#Units">DistanceUnits</A></I>.
+
+<P>
+
+
+<DIV ALIGN="center">
+<A HREF="../eom.html">eomx User Guide Home</A>
+</DIV>
+
+</BODY>
+</HTML>
