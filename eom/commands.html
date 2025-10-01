@@ -15,17 +15,18 @@ Commands typially operate on named objects.  Most are affected by the
 <Q>sticky</Q> <I>OutputRate</I> keyword.  Examples:
 
 <Pre>
+# Generate inertial and earth fixed ephemeris using default output rate
 Command PrintEphemeris gj_40x40 GCRF gj_40x40_i.e;
 Command PrintEphemeris gj_40x40 ITRF gj_40x40_f.e;
+# Create Matlab/Octave functions plotting data at 1 minute intervals
 OutputRate Minutes 1;
 Command PrintRange vinti kep vinti_rng_vk;
-Command PrintRange vinti vintij2 vinti_rng_vvj2;
-Command PrintRTC vinti spj3 vinti_rtc_vsp;
+Command PrintRTC   vinti kep vinti_rtc_vsp;
 </Pre>
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
-<B>OutputRate</B> <I><A HREF="#Duration">Duration</A></I>
+<B>OutputRate</B> <I><A HREF="duration.html">Duration</A></I>
 </font>
 </P>
 
@@ -35,7 +36,7 @@ generated.
 <P style="background-color:LightCyan;">
 <font face = "courier">
 <B>Command</B> <I>PrintEphemeris orbit_name
-<A HREF="#ReferenceFrame">frame</A> output_file_name</I>
+<A HREF="ic.html#ReferenceFrame">frame</A> output_file_name</I>
 </font>
 </P>
 
@@ -43,6 +44,17 @@ Writes STK <Q>.e</Q> formatted position and velocity ephemeris for the
 specified satellite name.  The output rate is determined internally.
 The filename suffix is user specified (does not default to <Q>.e</Q>).
 Output units are meters and meters/second.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>PrintOrbit orbit_name 
+<A HREF="ic.html#ReferenceFrame">frame</A> output_file_name</I>
+</font>
+</P>
+
+Writes a Matlab/Octave compatible function to the specified filename
+with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
+the range vs. time over the duration of the scenario.  The figure handle
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
@@ -54,7 +66,7 @@ Writes a Matlab/Octave compatible function to the specified filename
 with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
 the range vs. time over the duration of the scenario.  The figure handle
 and data are returned for use.  Output units are specified by
-<I><A HREF="#Units">DistanceUnits</A></I>.
+<I><A HREF="units.html">DistanceUnits</A></I>.
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
@@ -67,7 +79,7 @@ Writes a Matlab/Octave compatible function to the specified filename
 with the <Q>.m</Q> suffix added.  When run in Matlab, the function plots
 the range vs. time over the duration of the scenario.  The figure handle
 and data are returned for use.  Output units are specified by
-<I><A HREF="#Units">DistanceUnits</A></I>.  In addition, the spectrum
+<I><A HREF="units.html">DistanceUnits</A></I>.  In addition, the spectrum
 of the error is plotted where frequency is revs/period w.r.t. orbit1.  This
 functionality is intended for comparing differences between ephemerides of
 the same orbit definition.  For example, to compare the error between
@@ -87,7 +99,23 @@ the duration of the scenario.  The 3D plot is in the traditional radial,
 transverse (in-track), cross-track reference frame used for relative
 orbital dynamics.  The figure handle and data are returned for
 use.  Output units are specified by
-<I><A HREF="#Units">DistanceUnits</A></I>.
+<I><A HREF="units.html">DistanceUnits</A></I>.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<B>Command</B> <I>TransferOrbit start_orbit end_orbit
+                  <A HREF="date_time.html">Xfer_start_time</A>
+                  <A HREF="duration.html">Duration</A>
+                  output_file_prefix</I>
+</font>
+</P>
+
+Computes a transfer orbit using the shooting method described by
+Wiesel's "Modern Astrodynamics".  The propagator model is defined for the
+start_orbit is used for the transfer orbit.  Functionality is currently
+limited to an instantaneous delta-v with a transfer time of less than 1/2 rev.  However, there are no limitations on the propagator model (there is no
+2-body assumption).  Summary information about the transfer is written to
+the header of the Matlab/Octave compatible output file.  
 
 <P>
 
