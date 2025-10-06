@@ -109,6 +109,27 @@ The available <I>Model</I> types are:
 
 <P style="background-color:LightCyan;">
 <font face = "courier">
+<I>FandG</I>
+</font>
+</P>
+
+Two-body GP model based off of the algorithm from Fundamentals of
+Astrodynamics by Bate, Mueller, and White.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
+<I>SecularJ2</I>
+</font>
+</P>
+
+GP model incorporating secular perturbations in mean motion, RAAN, and
+argument of perigee.  The mean motion subject to J2 secular effects is
+used to determine the mean anomaly.  The rates of change in RAAN and
+argument of perigee are also computed using the modified mean motion
+(vs. the 2-body mean motion).  Mean element sets are expected.
+
+<P style="background-color:LightCyan;">
+<font face = "courier">
 <I>Kepler1</I>
 </font>
 </P>
